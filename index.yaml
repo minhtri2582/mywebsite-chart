@@ -1,3 +1,14 @@
 apiVersion: v1
-entries: {}
-generated: "2024-10-01T14:35:55.123104+07:00"
+entries:
+  mywebsite:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-10-01T15:09:55.010086+07:00"
+    description: A Helm chart for Kubernetes
+    digest: 7b67f118d088cc6538e0e78bfdd5fdfb9f601f2ee9fed741e017328881aa142c
+    name: mywebsite
+    type: application
+    urls:
+    - https://minhtri2582.github.io/mywebsite-chart/mywebsite-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-10-01T15:09:55.008904+07:00"
