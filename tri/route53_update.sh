@@ -4,17 +4,17 @@
 DNS_NAME="jenkins-server.lz061.awsnp.national.au"
 HOSTED_ZONE_NAME="lz061.awsnp.national.au"
 
-# Get EC2 Public IP using IMDSv2 (recommended)
+# Get EC2 Private IP using IMDSv2
 TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
-PUBLIC_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4)
+PRIVATE_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/local-ipv4)
 
-# Validate if the public IP was retrieved
-if [ -z "$PUBLIC_IP" ]; then
-    echo "❌ Failed to retrieve EC2 Public IP."
+# Validate if the private IP was retrieved
+if [ -z "$PRIVATE_IP" ]; then
+    echo "❌ Failed to retrieve EC2 Private IP."
     exit 1
 fi
 
-echo "✅ Retrieved EC2 Public IP: $PUBLIC_IP"
+echo "✅ Retrieved EC2 Private IP: $PRIVATE_IP"
 
 # Get Route53 Hosted Zone ID
 HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name \
@@ -31,7 +31,7 @@ echo "✅ Found Hosted Zone ID: $HOSTED_ZONE_ID"
 # Create Route53 JSON Update File
 cat << EOF > route53-update.json
 {
-  "Comment": "Auto-updating Route53 record with new EC2 IP",
+  "Comment": "Auto-updating Route53 record with new EC2 Private IP",
   "Changes": [
     {
       "Action": "UPSERT",
@@ -41,7 +41,7 @@ cat << EOF > route53-update.json
         "TTL": 300,
         "ResourceRecords": [
           {
-            "Value": "$PUBLIC_IP"
+            "Value": "$PRIVATE_IP"
           }
         ]
       }
@@ -58,7 +58,7 @@ aws route53 change-resource-record-sets \
     --change-batch file://route53-update.json
 
 if [ $? -eq 0 ]; then
-    echo "✅ DNS record for $DNS_NAME successfully updated to $PUBLIC_IP"
+    echo "✅ DNS record for $DNS_NAME successfully updated to $PRIVATE_IP"
 else
     echo "❌ Failed to update DNS record."
 fi
