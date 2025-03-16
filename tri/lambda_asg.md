@@ -78,4 +78,86 @@ Value: <Tên Auto Scaling Group của bạn>
 ✅ Clear suspend state
 ✅ Tương thích với AWS Lambda
 
-Bạn thử deploy và kiểm tra xem chạy đúng chưa nhé! 🚀
+
+Bạn có thể sử dụng Amazon EventBridge (trước đây là CloudWatch Events) để tự động kích hoạt AWS Lambda vào lúc 8:00 AM từ thứ Hai đến thứ Sáu.
+
+⸻
+
+🔹 Các Bước Thực Hiện
+
+1️⃣ Tạo AWS Lambda function (hoặc sử dụng Lambda đã có)
+2️⃣ Tạo EventBridge Rule để chạy mỗi ngày lúc 8:00 AM (Mon-Fri)
+3️⃣ Gắn Lambda vào EventBridge Rule
+
+⸻
+
+📌 1. Tạo EventBridge Rule
+
+Bạn có thể thực hiện qua AWS Console hoặc AWS CLI.
+
+👉 Cách 1: Dùng AWS Console
+	1.	Mở AWS EventBridge → Chọn Rules → Create Rule
+	2.	Đặt tên rule, ví dụ: TriggerLambdaAt8AM
+	3.	Chọn Rule Type → Chọn Schedule
+	4.	Đặt Cron Expression:
+
+0 8 ? * MON-FRI *
+
+🔹 Ý nghĩa cron:
+	•	0 8 → Chạy vào 8:00 AM UTC
+	•	? → Bỏ qua ngày trong tháng
+	•	* → Chạy mọi tháng
+	•	MON-FRI → Chạy từ Thứ Hai đến Thứ Sáu
+
+	5.	Chọn Target → Lambda Function → Chọn Lambda cần chạy
+	6.	Tạo Rule
+
+⸻
+
+👉 Cách 2: Dùng AWS CLI
+
+Chạy lệnh sau để tạo EventBridge Rule:
+
+aws events put-rule --name "TriggerLambdaAt8AM" \
+    --schedule-expression "cron(0 8 ? * MON-FRI *)" \
+    --state ENABLED
+
+Gắn Rule vào Lambda:
+
+aws lambda add-permission \
+    --function-name "YourLambdaFunction" \
+    --statement-id "EventBridgeInvoke" \
+    --action "lambda:InvokeFunction" \
+    --principal "events.amazonaws.com" \
+    --source-arn "arn:aws:events:your-region:your-account-id:rule/TriggerLambdaAt8AM"
+
+Gắn Lambda làm Target của Rule:
+
+aws events put-targets --rule "TriggerLambdaAt8AM" \
+    --targets "Id"="1","Arn"="arn:aws:lambda:your-region:your-account-id:function:YourLambdaFunction"
+
+
+
+⸻
+
+📌 2. Kiểm Tra Lại
+	•	Kiểm tra danh sách rules:
+
+aws events list-rules
+
+
+	•	Xem targets của rule:
+
+aws events list-targets-by-rule --rule "TriggerLambdaAt8AM"
+
+
+	•	Kiểm tra log trong CloudWatch Logs để đảm bảo Lambda chạy đúng lịch trình.
+
+⸻
+
+🚀 Tổng Kết
+
+✅ Tự động chạy Lambda vào 8:00 AM từ Thứ Hai đến Thứ Sáu
+✅ Cấu hình qua AWS Console hoặc CLI
+✅ Có thể kiểm tra log trong CloudWatch
+
