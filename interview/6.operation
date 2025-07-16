@@ -1,0 +1,129 @@
+🛠️ Operations – Mock Interview Q&A
+
+⸻
+
+🔹 1. Backup and Restore Strategy
+
+🧑‍💼 Interviewer:
+What’s your approach to backup and restore for cloud workloads?
+
+🧑‍💻 Candidate (You):
+I follow the 3-2-1 backup strategy:
+	•	Keep 3 copies of data
+	•	Store on 2 different media
+	•	Keep 1 offsite (or cross-region)
+
+For AWS:
+	•	Use EBS snapshots, RDS automated backups, and S3 versioning
+	•	For DynamoDB: Enable Point-In-Time Recovery (PITR)
+	•	Schedule backups via AWS Backup or infrastructure-as-code tools (Terraform)
+
+Restore strategy includes:
+	•	Periodic restore testing in staging
+	•	Backup tagging and retention policies
+	•	Ensure RPO (Recovery Point Objective) and RTO (Recovery Time Objective) align with business needs
+
+⸻
+
+🔹 2. Disaster Recovery (DR)
+
+🧑‍💼 Interviewer:
+How do you design for disaster recovery?
+
+🧑‍💻 Candidate:
+DR planning includes multiple tiers based on criticality:
+	•	Warm Standby: Partial resources running in another region, scaled up when needed
+	•	Multi-AZ or Multi-Region failover: For RDS, S3, ECS services
+	•	Backups + Automation: Use IaC (e.g., Terraform) to recreate infrastructure quickly
+	•	For DNS failover, use Route 53 health checks + failover policies
+
+Key DR considerations:
+	•	Cross-region replication (S3, RDS, DynamoDB)
+	•	Data consistency
+	•	Automated health checks and failover logic
+	•	Regular DR drills
+
+⸻
+
+🔹 3. Monitoring, Alerting, Tracing
+
+🧑‍💼 Interviewer:
+What tools do you use for monitoring and alerting?
+
+🧑‍💻 Candidate:
+For monitoring and alerts:
+	•	Cloud-native:
+	•	AWS: CloudWatch Metrics & Alarms, CloudWatch Synthetics, X-Ray for tracing
+	•	Azure: Azure Monitor, Log Analytics, Application Insights
+	•	Third-party tools:
+	•	Prometheus + Grafana: For metrics
+	•	Datadog, New Relic: Full-stack observability
+	•	Alerts routed via Slack, Opsgenie, PagerDuty
+
+I set up:
+	•	Threshold-based alerts (CPU > 80%, disk usage)
+	•	Latency alerts for APIs or endpoints
+	•	Tracing for distributed systems (microservices) using AWS X-Ray or OpenTelemetry
+
+⸻
+
+🔹 4. Logging: Splunk, AppDynamics
+
+🧑‍💼 Interviewer:
+How do you handle centralized logging?
+
+🧑‍💻 Candidate:
+We aggregate logs to a central platform for querying, alerting, and auditing:
+	•	Splunk:
+	•	Ingests logs from EC2, containers, apps
+	•	Use Hec token or CloudWatch/S3 connector
+	•	Custom dashboards for app health and security monitoring
+	•	AppDynamics:
+	•	Application Performance Monitoring (APM)
+	•	Tracks real-time performance, slow transactions, memory leaks
+	•	Auto-baselines application behavior and triggers alerts on anomalies
+
+I also implement log retention policies, masking of sensitive data, and role-based access for log viewers.
+
+⸻
+
+🔹 5. Databases – DynamoDB & PostgreSQL
+
+🧑‍💼 Interviewer:
+Can you compare DynamoDB and PostgreSQL and how you operate them?
+
+🧑‍💻 Candidate:
+	•	DynamoDB (NoSQL):
+	•	Serverless, highly scalable, low-latency
+	•	Operations: Set auto-scaling, enable PITR, monitor throttling metrics
+	•	Use Global Tables for multi-region HA
+	•	PostgreSQL (RDS or self-managed):
+	•	Relational DB with ACID compliance and complex queries
+	•	Operations: Use RDS snapshots, Multi-AZ for HA, read replicas for scaling
+	•	Monitor connection count, slow queries, IOPS, and ensure VACUUM is scheduled for performance
+
+I monitor both via CloudWatch, and set query-level alarms for RDS.
+
+⸻
+
+🔹 6. OS Patching Process
+
+🧑‍💼 Interviewer:
+What’s your OS patching strategy in production?
+
+🧑‍💻 Candidate:
+OS patching should be automated, safe, and scheduled:
+	•	AWS Systems Manager Patch Manager:
+	•	Tag EC2 instances for patching
+	•	Schedule maintenance windows
+	•	Apply critical and security patches only
+	•	Use compliance reports to track
+	•	In Kubernetes/ECS:
+	•	Roll out updated AMIs to nodes using blue/green node groups or drain + replace
+	•	Ensure containers are built on patched base images
+	•	Best Practices:
+	•	Test patches in staging first
+	•	Use immutable infrastructure where possible (redeploy instead of patching in-place)
+	•	Integrate patching into CI/CD pipelines
+
+⸻
