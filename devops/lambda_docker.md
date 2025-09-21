@@ -110,7 +110,7 @@ Gợi ý bảo mật: thay DB_USER/DB_PASSWORD bằng IAM Auth + RDS Proxy hoặ
 ⸻
 
 🐳 Dockerfile (x86_64; đổi sang -arm64 nếu chọn arm)
-```text
+```Dockerfile
 # Build + runtime dựa trên Lambda base image
 FROM public.ecr.aws/lambda/python:3.11
 
@@ -139,7 +139,7 @@ aws ecr get-login-password --region ap-southeast-1 \
 docker tag my-pg-lambda:latest <acct>.dkr.ecr.ap-southeast-1.amazonaws.com/my-pg-lambda:latest
 docker push <acct>.dkr.ecr.ap-southeast-1.amazonaws.com/my-pg-lambda:latest
 
-Tạo/Update Lambda
+# Tạo/Update Lambda
 
 aws lambda create-function \
 --function-name pg-demo-lambda \
@@ -160,16 +160,26 @@ aws lambda create-function \
 🔐 Dùng AWS Secrets Manager (tùy chọn)
 
 Thay vì set DB_USER/DB_PASSWORD trực tiếp:
-•	Tạo secret JSON:
+
+•	Tạo secret JSON: 
+```json
 {"username":"appuser","password":"...","host":"...","port":5432,"dbname":"appdb"}
+```
+
 •	Cấp quyền secretsmanager:GetSecretValue cho IAM role của Lambda.
+
 •	Trong handler.py (phần init), lấy secret và build conninfo. (Có thể mình viết sẵn đoạn code khi bạn cần.)
 
 ⸻
 
 ⚙️ Best practices nhanh
+
 •	RDS Proxy để pool connection chuẩn serverless, giảm số connection vào Postgres.
+
 •	arm64 (Graviton) nếu thư viện tương thích → tiết kiệm chi phí & cold start tốt hơn.
+
 •	Tăng Ephemeral storage nếu cần ghi file tạm lớn: --ephemeral-storage SizeInMB=4096.
+
 •	Tách logic DB ra module riêng, viết unit test với testcontainer/pytest.
+
 •	Bật VPC cho Lambda nếu RDS ở private subnet; thêm VPC endpoints (Secrets Manager/CloudWatch) để giảm NAT.
