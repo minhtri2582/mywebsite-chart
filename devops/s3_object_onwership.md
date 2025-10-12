@@ -1,6 +1,7 @@
 > S3 Enforce Object Ownership là một tính năng bảo mật trong Amazon S3 dùng để kiểm soát quyền sở hữu đối với các đối 
 > tượng (objects) được upload vào bucket — đặc biệt khi có nhiều tài khoản AWS khác nhau cùng tương tác với bucket đó.
 
+![img_1.png](img_1.png)
 
 ### 🧩 Mục đích chính
 
