@@ -94,3 +94,4 @@ Khi đó, quyền truy cập nên được quản lý qua IAM policy hoặc buck
 | **Kiểm soát tập trung** | Không | Có |
 | **Khuyến nghị hiện nay** | ❌ Tránh dùng | ✅ Nên dùng |
 
+![img.png](img.png)
