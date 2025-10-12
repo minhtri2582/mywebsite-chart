@@ -1,8 +1,4 @@
-Here’s a clean, production-ready AWS Lambda example that runs daily (via EventBridge) to automatically delete old snapshots — keeping only the latest 30 snapshots and any that are less than 30 days old.
-
-⸻
-
-🧩 Overview
+### 🧩 Overview
 	•	Trigger: Daily at 01:00 UTC using EventBridge (CloudWatch Scheduler)
 	•	Action: List snapshots (for a specific tag, volume, or all)
 	•	Retention Policy:
@@ -10,10 +6,9 @@ Here’s a clean, production-ready AWS Lambda example that runs daily (via Event
 	•	Keep the latest 30 snapshots
 	•	Delete everything else
 
-⸻
+### 🐍 Lambda Function (Python 3.9+)
 
-🐍 Lambda Function (Python 3.9+)
-
+```python
 import boto3
 import datetime
 
@@ -62,13 +57,13 @@ def lambda_handler(event, context):
 
     print(f"Kept {len(to_keep)} snapshots, deleted {len(to_delete)} old ones.")
 
+```
 
-⸻
-
-⏰ EventBridge (Scheduler) Rule
+### ⏰ EventBridge (Scheduler) Rule
 
 Create a rule in AWS Console or with CLI:
 
+```shell
 aws events put-rule \
   --name "daily-snapshot-cleanup" \
   --schedule-expression "cron(0 1 * * ? *)" \
@@ -82,19 +77,15 @@ aws lambda add-permission \
   --action "lambda:InvokeFunction" \
   --principal events.amazonaws.com \
   --source-arn arn:aws:events:REGION:ACCOUNT_ID:rule/daily-snapshot-cleanup
+```
 
 And connect the rule to the Lambda target.
 
-⸻
+### ✅ Notes & Customization
 
-✅ Notes & Customization
 	•	You can filter snapshots by:
 	•	Volume ID → {'Name': 'volume-id', 'Values': ['vol-xxxx']}
 	•	Tag → as in example
 	•	Description pattern → {'Name': 'description', 'Values': ['backup-*']}
 	•	Add logging to CloudWatch to monitor what’s being deleted.
 	•	Optionally use AWS Backup if you prefer policy-driven retention.
-
-⸻
-
-Would you like me to convert this into a Terraform or CloudFormation template that deploys the Lambda and EventBridge schedule automatically?
