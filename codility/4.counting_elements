@@ -1,0 +1,290 @@
+# Codility Lesson 4: Counting Elements — Song ngữ Anh – Việt
+
+## 1. FrogRiverOne — Con ếch qua sông
+
+### ✨ Problem / Bài toán
+
+**EN:** Find the earliest time when a frog can jump to the other side of a river. The leaves fall at positions in array `A`, and the river has width `X`.
+
+**VI:** Tìm thời điểm sớm nhất mà con ếch có thể nhảy qua sông. Lá rơi theo vị trí trong mảng `A`, và sông có chiều rộng `X`.
+
+---
+
+### 🔍 Key idea / Ý chính
+
+* Dùng **set** hoặc **dictionary** để đánh dấu các vị trí lá đã rơi.
+* Khi số lượng vị trí duy nhất = X → trả về chỉ số thời gian đó.
+* Nếu kết thúc mảng mà chưa đủ → trả về -1.
+
+---
+
+### 📊 Example / Ví dụ
+
+| X | A                 | Result | Giải thích                    |
+| - | ----------------- | ------ | ----------------------------- |
+| 5 | [1,3,1,4,2,3,5,4] | 6      | Tới index 6, lá đã phủ đủ 1→5 |
+| 3 | [1,3,1,3,2,1,3]   | 4      | Tới index 4 có đủ 1,2,3       |
+
+---
+
+### 💻 Python Code
+
+```python
+def frog_river_one(X, A):
+    positions = set()
+    for i, pos in enumerate(A):
+        positions.add(pos)
+        if len(positions) == X:
+            return i
+    return -1
+
+print(frog_river_one(5, [1,3,1,4,2,3,5,4]))  # 6
+```
+
+### 💻 PHP Code
+
+```php
+<?php
+function frog_river_one(int $X, array $A): int {
+    $seen = [];
+    foreach ($A as $i => $pos) {
+        $seen[$pos] = true;
+        if (count($seen) === $X) return $i;
+    }
+    return -1;
+}
+
+echo frog_river_one(5, [1,3,1,4,2,3,5,4]); // 6
+```
+
+**Complexity:** O(N) time, O(X) space.
+
+---
+
+## 2. PermCheck — Kiểm tra hoán vị
+
+### ✨ Problem / Bài toán
+
+**EN:** Check whether array `A` is a permutation of numbers 1..N.
+
+**VI:** Kiểm tra xem mảng `A` có phải là hoán vị của các số từ 1 đến N không.
+
+---
+
+### 🔍 Key idea / Ý chính
+
+* Một dãy hợp lệ có tổng bằng `N*(N+1)/2` và không có phần tử trùng/lệch ngoài phạm vi.
+* Dùng **set** để kiểm tra độ dài và giá trị.
+
+---
+
+### 📊 Example / Ví dụ
+
+| A         | Result | Giải thích    |
+| --------- | ------ | ------------- |
+| [4,1,3,2] | 1      | Hoán vị chuẩn |
+| [4,1,3]   | 0      | Thiếu 2       |
+
+---
+
+### 💻 Python Code
+
+```python
+def perm_check(A):
+    n = len(A)
+    if len(set(A)) != n:
+        return 0
+    if min(A) != 1 or max(A) != n:
+        return 0
+    return 1
+
+print(perm_check([4,1,3,2]))  # 1
+```
+
+### 💻 PHP Code
+
+```php
+<?php
+function perm_check(array $A): int {
+    $n = count($A);
+    if (count(array_unique($A)) !== $n) return 0;
+    if (min($A) !== 1 || max($A) !== $n) return 0;
+    return 1;
+}
+
+echo perm_check([4,1,3,2]); // 1
+```
+
+**Complexity:** O(N) time, O(N) space.
+
+---
+
+## 3. MissingInteger — Số nguyên dương nhỏ nhất còn thiếu
+
+### ✨ Problem / Bài toán
+
+**EN:** Find the smallest positive integer (greater than 0) that does not occur in array `A`.
+
+**VI:** Tìm số nguyên dương nhỏ nhất (lớn hơn 0) chưa xuất hiện trong mảng `A`.
+
+---
+
+### 🔍 Key idea / Ý chính
+
+* Dùng **set** để tra nhanh.
+* Duyệt từ 1 đến `len(A)+1` để tìm số đầu tiên không có.
+
+---
+
+### 📊 Example / Ví dụ
+
+| A             | Result | Giải thích            |
+| ------------- | ------ | --------------------- |
+| [1,3,6,4,1,2] | 5      | Số 5 không xuất hiện  |
+| [1,2,3]       | 4      | Tiếp theo sau 3       |
+| [-1,-3]       | 1      | Không có số dương nào |
+
+---
+
+### 💻 Python Code
+
+```python
+def missing_integer(A):
+    s = set(A)
+    for i in range(1, len(A) + 2):
+        if i not in s:
+            return i
+
+print(missing_integer([1,3,6,4,1,2]))  # 5
+```
+
+### 💻 PHP Code
+
+```php
+<?php
+function missing_integer(array $A): int {
+    $set = array_flip($A);
+    $n = count($A);
+    for ($i = 1; $i <= $n + 1; $i++) {
+        if (!isset($set[$i])) return $i;
+    }
+    return 1;
+}
+
+echo missing_integer([1,3,6,4,1,2]); // 5
+```
+
+**Complexity:** O(N) time, O(N) space.
+
+---
+
+## 4. MaxCounters — Bộ đếm tối đa
+
+### ✨ Problem / Bài toán
+
+**EN:** You have `N` counters initialized to 0. Given operations array `A`, perform:
+
+* If `1 ≤ A[i] ≤ N`: increase counter `A[i]` by 1.
+* If `A[i] = N + 1`: set all counters to the maximum value.
+  Return final counters state.
+
+**VI:** Có `N` bộ đếm ban đầu bằng 0. Với mảng thao tác `A`, thực hiện:
+
+* Nếu `1 ≤ A[i] ≤ N`: tăng bộ đếm `A[i]` lên 1.
+* Nếu `A[i] = N + 1`: đặt tất cả bộ đếm bằng giá trị lớn nhất hiện có.
+  Trả về mảng kết quả cuối cùng.
+
+---
+
+### 🔍 Key idea / Ý chính
+
+* Không nên reset toàn bộ mảng mỗi lần gặp `max counter` → tốn O(N²).
+* Dùng **lazy update**:
+
+  * `base` giữ giá trị đồng bộ.
+  * Cập nhật `max_val` khi tăng.
+  * Sau cùng, những phần tử nhỏ hơn `base` → gán lại bằng `base`.
+
+---
+
+### 📊 Example / Ví dụ
+
+| N | A               | Result      | Giải thích           |
+| - | --------------- | ----------- | -------------------- |
+| 5 | [3,4,4,6,1,4,4] | [3,2,2,4,2] | Theo thứ tự thao tác |
+
+---
+
+### 💻 Python Code
+
+```python
+def max_counters(N, A):
+    counters = [0] * N
+    max_val = 0
+    base = 0
+
+    for x in A:
+        if 1 <= x <= N:
+            idx = x - 1
+            if counters[idx] < base:
+                counters[idx] = base
+            counters[idx] += 1
+            if counters[idx] > max_val:
+                max_val = counters[idx]
+        else:
+            base = max_val
+
+    for i in range(N):
+        if counters[i] < base:
+            counters[i] = base
+    return counters
+
+print(max_counters(5, [3,4,4,6,1,4,4]))  # [3,2,2,4,2]
+```
+
+### 💻 PHP Code
+
+```php
+<?php
+function max_counters(int $N, array $A): array {
+    $counters = array_fill(0, $N, 0);
+    $maxVal = 0;
+    $base = 0;
+
+    foreach ($A as $x) {
+        if ($x >= 1 && $x <= $N) {
+            $idx = $x - 1;
+            if ($counters[$idx] < $base) $counters[$idx] = $base;
+            $counters[$idx]++;
+            if ($counters[$idx] > $maxVal) $maxVal = $counters[$idx];
+        } else {
+            $base = $maxVal;
+        }
+    }
+
+    for ($i = 0; $i < $N; $i++) {
+        if ($counters[$i] < $base) $counters[$i] = $base;
+    }
+
+    return $counters;
+}
+
+print_r(max_counters(5, [3,4,4,6,1,4,4])); // [3,2,2,4,2]
+```
+
+**Complexity:** O(N + M) time, O(N) space.
+
+---
+
+## Quick Summary / Tóm tắt
+
+| Lesson | Task           | Ý chính                            | Độ phức tạp             |
+| ------ | -------------- | ---------------------------------- | ----------------------- |
+| 4.1    | FrogRiverOne   | Thời điểm đủ lá để ếch qua sông    | O(N) time, O(X) space   |
+| 4.2    | PermCheck      | Kiểm tra dãy có phải hoán vị       | O(N) time, O(N) space   |
+| 4.3    | MissingInteger | Số nguyên dương nhỏ nhất còn thiếu | O(N) time, O(N) space   |
+| 4.4    | MaxCounters    | Cập nhật tối ưu bộ đếm             | O(N+M) time, O(N) space |
+
+---
+
+**Tổng kết:** Bài học này giúp rèn luyện tư duy xử lý mảng lớn, kỹ năng tối ưu vòng lặp và cấu trúc dữ liệu — chuẩn bị cho các bài hiệu năng cao hơn. 🚀
