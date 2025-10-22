@@ -1,6 +1,3 @@
-import pypandoc
-
-markdown_text = """
 # 💬 AWS Cost Estimation — Full Q&A Discussion Template
 
 ## 🟢 1. Overview & Objectives
@@ -90,8 +87,4 @@ markdown_text = """
 > **Optimization Potential:** 20–25%  
 > **Key Risks:** Data transfer spikes, CloudWatch log growth, NAT Gateway egress charges  
 > **Next Steps:** Validate assumptions → run AWS Pricing Calculator → finalize budget proposal.
-"""
 
-output_path = "/mnt/data/AWS_Cost_Estimation_QA.docx"
-pypandoc.convert_text(markdown_text, 'docx', format='md', outputfile=output_path, extra_args=['--standalone'])
-output_path
