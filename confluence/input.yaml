@@ -1,0 +1,50 @@
+incident:
+  INCIDENT_ID: "13142134"
+  INCIDENT_TITLE: "MySQL full disk"
+  INCIDENT_DATE: "2026-01-15"
+  START_TIME: "09:12"
+  END_TIME: "10:05"
+  SEVERITY: "SEV-2"
+  APPLICATION_NAME: "Billing Service"
+  ENVIRONMENT: "production"
+  OWNER_TEAM: "Platform"
+summary:
+  SUMMARY: "MySQL data volume reached 100% usage, causing write failures and API errors."
+impact:
+  IMPACTED_CHANNELS: "API, Admin portal"
+  CUSTOMER_IMPACT: "~35% of users saw intermittent errors"
+  TRANSACTION_IMPACT: "Orders delayed for 43 minutes"
+  BUSINESS_IMPACT: "Revenue impact estimated at $4.2k"
+timeline:
+  T1: "09:12"
+  E1: "Disk usage alert fired on primary MySQL node"
+  T2: "09:20"
+  E2: "API errors spiked; on-call acknowledged"
+  T3: "09:35"
+  E3: "Logs rotated and old backups removed"
+  T4: "10:05"
+  E4: "Service recovered; error rate normalized"
+root_cause:
+  PRIMARY_ROOT_CAUSE: "Unbounded binary logs due to retention misconfiguration"
+  CONTRIBUTING_1: "No disk usage alert for binlog directory"
+  CONTRIBUTING_2: "Nightly cleanup job failed for 3 days"
+detection_response:
+  DETECTION_METHOD: "Prometheus disk-usage alert"
+  TTD: "7 minutes"
+  TTR: "53 minutes"
+  TEAMS_INVOLVED: "Platform, Backend"
+resolution:
+  IMMEDIATE_FIX: "Freed space by removing old binlogs and backups"
+  RECOVERY_STEPS: "Expanded volume by 50GB and restarted MySQL"
+  VALIDATION_METHOD: "Write tests + error rate back to baseline"
+preventive_actions:
+  ACTION_1: "Configure binlog retention to 7 days"
+  ACTION_OWNER_1: "DBA Team"
+  ACTION_DUE_1: "2026-01-22"
+  ACTION_2: "Add disk alert for binlog directory"
+  ACTION_OWNER_2: "SRE Team"
+  ACTION_DUE_2: "2026-01-19"
+lessons_learned:
+  WENT_WELL: "Alerting worked and on-call response was quick"
+  TO_IMPROVE: "Automated cleanup and capacity planning"
+  TAKEAWAY: "Treat storage for critical DBs as first-class SLO"
