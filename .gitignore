@@ -1,4 +1,10 @@
 codility/test.*
 
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+
 # Snyk Security Extension - AI Rules (auto-generated)
 .cursor/rules/snyk_rules.mdc
